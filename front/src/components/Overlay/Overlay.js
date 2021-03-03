@@ -13,14 +13,15 @@ export default class Overlay extends React.Component {
         //if the extension is running on twitch or dev rig, set the shorthand here. otherwise, set to null. 
         this.twitch = window.Twitch ? window.Twitch.ext : null
         this.changeShownPlayer = this.changeShownPlayer.bind(this);
+        this.hideExt = this.hideExt.bind(this);
 
         this.mockConfig = {
             "player1": {
-                "name": "1",
+                "name": "Heyyyy",
                 "deck": "https://www.encoredecks.com/deck/CudnvVQTW"
             },
             "player2": {
-                "name": "2",
+                "name": "Yooo",
                 "deck": "https://www.encoredecks.com/deck/YHir4YTdX"
             }
 
@@ -31,6 +32,7 @@ export default class Overlay extends React.Component {
             player1: this.mockConfig["player1"],
             player2: this.mockConfig["player2"],
             shownPlayer: "player1",
+            myHide: true,
             isVisible: true
         }
 
@@ -119,22 +121,24 @@ export default class Overlay extends React.Component {
 
     changeShownPlayer(e) {
         e.persist();
+        this.setState({ shownPlayer: "player" + e.target.value });
+    }
 
-        this.setState(() => {
-            return { shownPlayer: "player" + e.target.value }
-        })
-
+    hideExt() {
+        this.setState({myHide: !this.state.myHide});
     }
 
     render() {
         const player1 = this.state.player1;
         const player2 = this.state.player2;
         const shownPlayer = this.state.shownPlayer;
+        const myHide = this.state.myHide;
 
-        if (this.state.finishedLoading && this.state.isVisible) {
+        if (this.state.finishedLoading && this.state.isVisible && !myHide) {
             return (
                 <div className="App">
                     <div className={this.state.theme === 'light' ? 'Config-light' : 'Config-dark'}>
+                    <button onClick={this.hideExt}>Toggle Ext</button>
                         <div className="GroupDeck">
                             <button value="1" onClick={this.changeShownPlayer}>{player1.name}</button>
                             <button value="2" onClick={this.changeShownPlayer}>{player2.name}</button>
@@ -151,7 +155,7 @@ export default class Overlay extends React.Component {
         } else {
             return (
                 <div className="App">
-                    Waiting ..
+                    <button onClick={this.hideExt}>Toggle Ext</button>
                 </div>
             )
         }
