@@ -26,9 +26,6 @@ const Decklist = (props) => {
     <div className="Decklist">
       {isShown && (
         <div className="detail" dangerouslySetInnerHTML={{__html: detail.Translation}}>
-          {/* <React.Fragment>
-          {detail.Translation}
-          </React.Fragment> */}
         </div>
       )}
       {cards}

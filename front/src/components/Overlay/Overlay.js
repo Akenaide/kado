@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Authentication from '../../util/Authentication/Authentication'
 import Decklist from '../Decklist/Decklist'
 
@@ -12,6 +12,8 @@ export default class Overlay extends React.Component {
 
         //if the extension is running on twitch or dev rig, set the shorthand here. otherwise, set to null. 
         this.twitch = window.Twitch ? window.Twitch.ext : null
+        this.changeShownPlayer = this.changeShownPlayer.bind(this);
+
         this.mockConfig = {
             "user1": {
                 "name": "1",
@@ -27,23 +29,26 @@ export default class Overlay extends React.Component {
             finishedLoading: false,
             theme: 'light',
             user1: this.mockConfig["user1"],
+            user2: this.mockConfig["user2"],
+            shownPlayer: "user1",
             isVisible: true
         }
 
 
-        this.user1 = {}
 
+    }
+
+    getDecklist(player, num) {
         let httpRequest = new XMLHttpRequest();
-
 
         httpRequest.open('POST', ExtAPI + "views/translationimages")
         httpRequest.onreadystatechange = () => {
             if (httpRequest.readyState === XMLHttpRequest.DONE) {
                 if (httpRequest.status === 200) {
                     this.setState(() => {
-                        const user = this.state.user1
-                        user.data = JSON.parse(httpRequest.responseText)
-                        return { user1: user }
+                        player.data = JSON.parse(httpRequest.responseText)
+                        let key = "user" + num
+                        return { key: player }
                     })
                 } else {
                     console.log("error get translation")
@@ -52,7 +57,7 @@ export default class Overlay extends React.Component {
         }
 
         httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        httpRequest.send('url=' + encodeURIComponent(this.state.user1.deck))
+        httpRequest.send('url=' + encodeURIComponent(player.deck))
     }
 
     contextUpdate(context, delta) {
@@ -82,6 +87,9 @@ export default class Overlay extends React.Component {
                     this.setState(() => {
                         return { finishedLoading: true }
                     })
+
+                    this.getDecklist(this.state.user1, 1);
+                    this.getDecklist(this.state.user2, 2);
                 }
             })
 
@@ -109,13 +117,34 @@ export default class Overlay extends React.Component {
         }
     }
 
+    changeShownPlayer(e) {
+        e.persist();
+
+        this.setState(() => {
+            return { shownPlayer: "user" + e.target.value }
+        })
+
+    }
+
     render() {
         const user1 = this.state.user1;
+        const user2 = this.state.user2;
+        const shownPlayer = this.state.shownPlayer;
+
         if (this.state.finishedLoading && this.state.isVisible) {
             return (
                 <div className="App">
                     <div className={this.state.theme === 'light' ? 'Config-light' : 'Config-dark'}>
-                        <Decklist deck={user1.data}></Decklist>
+                        <div className="GroupDeck">
+                            <button value="1" onClick={this.changeShownPlayer}>{user1.name}</button>
+                            <button value="2" onClick={this.changeShownPlayer}>{user2.name}</button>
+                        </div>
+                        {shownPlayer == 'user1' &&
+                            <Decklist deck={user1.data}></Decklist>
+                        }
+                        {shownPlayer == 'user2' &&
+                            <Decklist deck={user2.data}></Decklist>
+                        }
                     </div>
                 </div>
             )

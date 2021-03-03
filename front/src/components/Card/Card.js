@@ -5,15 +5,10 @@ import styles from './Card.module.css';
 const Card = (props) => {
   const card = props.infos;
 
-  function myCb() {
-    props.cb(card)
-  }
-
   return (
     <div className="Card">
-      <img src={card.URL} onMouseEnter={myCb} onMouseLeave={() => props.hide(false)}></img>
+      <img src={card.URL} onMouseEnter={() => props.cb(card)} onMouseLeave={() => props.hide(false)}></img>
     </div>
-
   )
 };
 
