@@ -1,9 +1,9 @@
 .App {
     font-family: Arial, Helvetica, sans-serif;
+    width: 33%;
 }
 
 .App-light{
-    color:#232127;
     color: greenyellow;
 }
 

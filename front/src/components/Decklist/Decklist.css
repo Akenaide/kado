@@ -1,0 +1,11 @@
+.Decklist {
+    overflow: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.detail {
+    position: absolute;
+    left: 30%;
+    background-color: white;
+}
