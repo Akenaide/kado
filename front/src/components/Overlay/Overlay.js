@@ -15,11 +15,11 @@ export default class Overlay extends React.Component {
         this.changeShownPlayer = this.changeShownPlayer.bind(this);
 
         this.mockConfig = {
-            "user1": {
+            "player1": {
                 "name": "1",
                 "deck": "https://www.encoredecks.com/deck/CudnvVQTW"
             },
-            "user2": {
+            "player2": {
                 "name": "2",
                 "deck": "https://www.encoredecks.com/deck/YHir4YTdX"
             }
@@ -28,9 +28,9 @@ export default class Overlay extends React.Component {
         this.state = {
             finishedLoading: false,
             theme: 'light',
-            user1: this.mockConfig["user1"],
-            user2: this.mockConfig["user2"],
-            shownPlayer: "user1",
+            player1: this.mockConfig["player1"],
+            player2: this.mockConfig["player2"],
+            shownPlayer: "player1",
             isVisible: true
         }
 
@@ -47,7 +47,7 @@ export default class Overlay extends React.Component {
                 if (httpRequest.status === 200) {
                     this.setState(() => {
                         player.data = JSON.parse(httpRequest.responseText)
-                        let key = "user" + num
+                        let key = "player" + num
                         return { key: player }
                     })
                 } else {
@@ -88,8 +88,8 @@ export default class Overlay extends React.Component {
                         return { finishedLoading: true }
                     })
 
-                    this.getDecklist(this.state.user1, 1);
-                    this.getDecklist(this.state.user2, 2);
+                    this.getDecklist(this.state.player1, 1);
+                    this.getDecklist(this.state.player2, 2);
                 }
             })
 
@@ -121,14 +121,14 @@ export default class Overlay extends React.Component {
         e.persist();
 
         this.setState(() => {
-            return { shownPlayer: "user" + e.target.value }
+            return { shownPlayer: "player" + e.target.value }
         })
 
     }
 
     render() {
-        const user1 = this.state.user1;
-        const user2 = this.state.user2;
+        const player1 = this.state.player1;
+        const player2 = this.state.player2;
         const shownPlayer = this.state.shownPlayer;
 
         if (this.state.finishedLoading && this.state.isVisible) {
@@ -136,14 +136,14 @@ export default class Overlay extends React.Component {
                 <div className="App">
                     <div className={this.state.theme === 'light' ? 'Config-light' : 'Config-dark'}>
                         <div className="GroupDeck">
-                            <button value="1" onClick={this.changeShownPlayer}>{user1.name}</button>
-                            <button value="2" onClick={this.changeShownPlayer}>{user2.name}</button>
+                            <button value="1" onClick={this.changeShownPlayer}>{player1.name}</button>
+                            <button value="2" onClick={this.changeShownPlayer}>{player2.name}</button>
                         </div>
-                        {shownPlayer == 'user1' &&
-                            <Decklist deck={user1.data}></Decklist>
+                        {shownPlayer == 'player1' &&
+                            <Decklist deck={player1.data}></Decklist>
                         }
-                        {shownPlayer == 'user2' &&
-                            <Decklist deck={user2.data}></Decklist>
+                        {shownPlayer == 'player2' &&
+                            <Decklist deck={player2.data}></Decklist>
                         }
                     </div>
                 </div>

@@ -24,16 +24,16 @@ export default class ConfigPage extends React.Component {
         this.state = {
             finishedLoading: false,
             theme: 'light',
-            user1: new Player(),
-            user2: new Player(),
+            player1: new Player(),
+            player2: new Player(),
         }
 
         this.mockConfig = {
-            "user1": {
+            "player1": {
                 "name": "1",
                 "deck": "https://www.encoredecks.com/deck/CudnvVQTW"
             },
-            "user2": {
+            "player2": {
                 "name": "2",
                 "deck": "https://www.encoredecks.com/deck/YHir4YTdX"
             }
@@ -41,15 +41,15 @@ export default class ConfigPage extends React.Component {
         }
 
         this.handleSubmit = this.handleSubmit.bind(this)
-        this.handleUserChange = this.handleUserChange.bind(this)
+        this.handleplayerChange = this.handleplayerChange.bind(this)
 
     }
 
-    handleUserChange(user, number) {
+    handleplayerChange(player, number) {
         if (number == 1) {
-            this.setState({ user1: user });
+            this.setState({ player1: player });
         } else {
-            this.setState({ user2: user });
+            this.setState({ player2: player });
 
         }
     }
@@ -66,7 +66,7 @@ export default class ConfigPage extends React.Component {
         // do config page setup as needed here
         if (this.twitch) {
             this.twitch.onAuthorized((auth) => {
-                this.Authentication.setToken(auth.token, auth.userId)
+                this.Authentication.setToken(auth.token, auth.playerId)
                 if (!this.state.finishedLoading) {
                     // if the component hasn't finished loading (as in we've not set up after getting a token), let's set it up now.
 
@@ -86,8 +86,8 @@ export default class ConfigPage extends React.Component {
 
             this.setState(() => {
                 return {
-                    user1: config ? config.user1 : new Player(),
-                    user2: config ? config.user2 : new Player()
+                    player1: config ? config.player1 : new Player(),
+                    player2: config ? config.player2 : new Player()
                 }
             })
         }
@@ -95,22 +95,22 @@ export default class ConfigPage extends React.Component {
 
     handleSubmit(event) {
 
-        window.Twitch.ext.rig.log("1", this.state.user1);
-        window.Twitch.ext.rig.log("2", this.state.user2);
-        this.twitch.configuration.set('broadcaster', '1.0', { "user1": this.state.user1, "user2": this.state.user2 })
+        window.Twitch.ext.rig.log("1", this.state.player1);
+        window.Twitch.ext.rig.log("2", this.state.player2);
+        this.twitch.configuration.set('broadcaster', '1.0', { "player1": this.state.player1, "player2": this.state.player2 })
         let httpRequest = new XMLHttpRequest();
 
         httpRequest.open('POST', ExtAPI + "views/cache?force=true",)
         httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        httpRequest.send('decks=' + encodeURIComponent(this.state.user1.deck) + ',' + encodeURIComponent(this.state.user2.deck));
+        httpRequest.send('decks=' + encodeURIComponent(this.state.player1.deck) + ',' + encodeURIComponent(this.state.player2.deck));
 
 
         event.preventDefault();
     }
 
     render() {
-        const user1 = this.state.user1;
-        const user2 = this.state.user2;
+        const player1 = this.state.player1;
+        const player2 = this.state.player2;
 
         if (this.state.finishedLoading && this.Authentication.isModerator()) {
             return (
@@ -118,8 +118,8 @@ export default class ConfigPage extends React.Component {
                     <div className={this.state.theme === 'light' ? 'Config-light' : 'Config-dark'}>
                         <form onSubmit={this.handleSubmit}>
 
-                            <PlayerConfig user={user1} onUserChange={this.handleUserChange} number={1} />
-                            <PlayerConfig user={user2} onUserChange={this.handleUserChange} number={2} />
+                            <PlayerConfig player={player1} onplayerChange={this.handleplayerChange} number={1} />
+                            <PlayerConfig player={player2} onplayerChange={this.handleplayerChange} number={2} />
 
                             <input type="submit" value="Submit"></input>
                         </form>
