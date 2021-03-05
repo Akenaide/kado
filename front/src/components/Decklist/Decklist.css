@@ -9,3 +9,7 @@
     left: 30%;
     background-color: white;
 }
+
+.detail img {
+    max-width: 120px;
+}
