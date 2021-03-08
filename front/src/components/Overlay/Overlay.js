@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import Authentication from '../../util/Authentication/Authentication'
 import Decklist from '../Decklist/Decklist'
+import Toggle from '../Toggle/Toggle'
 
 import './Overlay.css'
 
@@ -137,8 +138,8 @@ export default class Overlay extends React.Component {
         if (this.state.finishedLoading && this.state.isVisible && !myHide) {
             return (
                 <div className="App">
-                    <div className={this.state.theme === 'light' ? 'Config-light' : 'Config-dark'}>
-                    <button onClick={this.hideExt}>Toggle Ext</button>
+                    <Toggle toggleFunc={this.hideExt} toHide={myHide}></Toggle>
+                    <div className={this.state.theme === 'light' ? 'Config-light' : 'Config-dark'} className="content">
                         <div className="GroupDeck">
                             <button value="1" onClick={this.changeShownPlayer}>{player1.name}</button>
                             <button value="2" onClick={this.changeShownPlayer}>{player2.name}</button>
@@ -155,7 +156,7 @@ export default class Overlay extends React.Component {
         } else {
             return (
                 <div className="App">
-                    <button onClick={this.hideExt}>Toggle Ext</button>
+                    <Toggle toggleFunc={this.hideExt} toHide={myHide}></Toggle>
                 </div>
             )
         }
