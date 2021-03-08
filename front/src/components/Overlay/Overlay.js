@@ -87,12 +87,17 @@ export default class Overlay extends React.Component {
                     // if the component hasn't finished loading (as in we've not set up after getting a token), let's set it up now.
 
                     // now we've done the setup for the component, let's set the state to true to force a rerender with the correct data.
+                let config = this.twitch.configuration.broadcaster ? JSON.parse(this.twitch.configuration.broadcaster.content) : this.mockConfig
+                this.setState(() => {
+                    return {
+                        player1: config ? config.player1 : new Player(),
+                        player2: config ? config.player2 : new Player()
+                    }
+                })
                     this.setState(() => {
                         return { finishedLoading: true }
                     })
 
-                    this.getDecklist(this.state.player1, 1);
-                    this.getDecklist(this.state.player2, 2);
                 }
             })
 

@@ -66,7 +66,7 @@ export default class ConfigPage extends React.Component {
         // do config page setup as needed here
         if (this.twitch) {
             this.twitch.onAuthorized((auth) => {
-                this.Authentication.setToken(auth.token, auth.playerId)
+                this.Authentication.setToken(auth.token, auth.userId)
                 if (!this.state.finishedLoading) {
                     // if the component hasn't finished loading (as in we've not set up after getting a token), let's set it up now.
 
@@ -75,6 +75,13 @@ export default class ConfigPage extends React.Component {
                         return { finishedLoading: true }
                     })
                 }
+                let config = this.twitch.configuration.broadcaster ? JSON.parse(this.twitch.configuration.broadcaster.content) : this.mockConfig
+                this.setState(() => {
+                    return {
+                        player1: config ? config.player1 : new Player(),
+                        player2: config ? config.player2 : new Player()
+                    }
+                })
             })
 
             this.twitch.onContext((context, delta) => {
@@ -82,22 +89,19 @@ export default class ConfigPage extends React.Component {
             })
 
 
-            let config = this.twitch.configuration.broadcaster ? this.twitch.configuration.broadcaster.content : this.mockConfig
 
-            this.setState(() => {
-                return {
-                    player1: config ? config.player1 : new Player(),
-                    player2: config ? config.player2 : new Player()
-                }
-            })
         }
     }
 
     handleSubmit(event) {
 
-        window.Twitch.ext.rig.log("1", this.state.player1);
-        window.Twitch.ext.rig.log("2", this.state.player2);
-        this.twitch.configuration.set('broadcaster', '1.0', { "player1": this.state.player1, "player2": this.state.player2 })
+        event.preventDefault();
+        if (this.Authentication.isAuthenticated()) {
+            this.twitch.onAuthorized((auth) => {
+                this.twitch.configuration.set('broadcaster', '', JSON.stringify({ "player1": this.state.player1, "player2": this.state.player2 }))
+            });
+        }
+
         let httpRequest = new XMLHttpRequest();
 
         httpRequest.open('POST', ExtAPI + "views/cache?force=true",)
@@ -105,7 +109,6 @@ export default class ConfigPage extends React.Component {
         httpRequest.send('decks=' + encodeURIComponent(this.state.player1.deck) + ',' + encodeURIComponent(this.state.player2.deck));
 
 
-        event.preventDefault();
     }
 
     render() {
